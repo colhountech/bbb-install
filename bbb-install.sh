@@ -26,11 +26,11 @@
 #  Install BigBlueButton 3.0.x with a SSL certificate from Let's Encrypt using hostname bbb.example.com
 #  and email address info@example.com and apply a basic firewall
 #
-#    wget -qO- https://raw.githubusercontent.com/bigbluebutton/bbb-install/v3.0.x-release/bbb-install.sh | bash -s -- -w -v jammy-300 -s bbb.example.com -e info@example.com
+#    wget -qO- https://raw.githubusercontent.com/colhountech/bbb-install/v3.0.x-release/bbb-install.sh | bash -s -- -w -v jammy-300 -s bbb.example.com -e info@example.com
 #
 #  Install BigBlueButton with SSL + Greenlight
 #
-#    wget -qO- https://raw.githubusercontent.com/bigbluebutton/bbb-install/v3.0.x-release/bbb-install.sh  | bash -s -- -w -v jammy-300 -s bbb.example.com -e info@example.com -g
+#    wget -qO- https://raw.githubusercontent.com/colhountech/bbb-install/v3.0.x-release/bbb-install.sh  | bash -s -- -w -v jammy-300 -s bbb.example.com -e info@example.com -g
 #
 
 usage() {
@@ -42,7 +42,7 @@ Script for installing a BigBlueButton 3.0 server in under 30 minutes.
 This script also checks if your server supports https://docs.bigbluebutton.org/administration/install/#minimum-server-requirements
 
 USAGE:
-    wget -qO- https://raw.githubusercontent.com/bigbluebutton/bbb-install/v3.0.x-release/bbb-install.sh | bash -s -- [OPTIONS]
+    wget -qO- https://raw.githubusercontent.com/colhountech/bbb-install/v3.0.x-release/bbb-install.sh | bash -s -- [OPTIONS]
 
 OPTIONS (install BigBlueButton):
 
@@ -112,7 +112,7 @@ Sample options for setup a BigBlueButton 3.0 server with LTI framework while man
 
 SUPPORT:
     Community: https://bigbluebutton.org/support
-         Docs: https://github.com/bigbluebutton/bbb-install
+         Docs: https://github.com/colhountech/bbb-install
                https://docs.bigbluebutton.org/administration/install/#minimum-server-requirements
 
 HERE
@@ -1623,7 +1623,7 @@ fi
   if [[ $BIGBLUEBUTTON_RELEASE == 2.2.* ]] && [[ ${BIGBLUEBUTTON_RELEASE#*.*.} -lt 29 ]]; then
     sed -i "s/proxy_pass .*/proxy_pass https:\/\/$IP:7443;/g" /usr/share/bigbluebutton/nginx/sip.nginx
   else
-    # Use nginx as proxy for WSS -> WS (see https://github.com/bigbluebutton/bigbluebutton/issues/9667)
+    # Use nginx as proxy for WSS -> WS (see https://github.com/colhountech/bigbluebutton/issues/9667)
     yq e -i '.public.media.sipjsHackViaWs = true' /etc/bigbluebutton/bbb-html5.yml
     sed -i "s/proxy_pass .*/proxy_pass http:\/\/$IP:5066;/g" /usr/share/bigbluebutton/nginx/sip.nginx
     xmlstarlet edit --inplace --update '//param[@name="ws-binding"]/@value' --value "$IP:5066" /opt/freeswitch/conf/sip_profiles/external.xml
@@ -1665,13 +1665,13 @@ fi
       yq e -i ".freeswitch.sip_ip = \"$IP\"" $TARGET
     fi
   else
-    # Use nginx as proxy for WSS -> WS (see https://github.com/bigbluebutton/bigbluebutton/issues/9667)
+    # Use nginx as proxy for WSS -> WS (see https://github.com/colhountech/bigbluebutton/issues/9667)
     yq e -i ".freeswitch.sip_ip = \"$IP\"" $TARGET
   fi
   chown bigbluebutton:bigbluebutton $TARGET
   chmod 644 $TARGET
 
-  # Configure mediasoup IPs, reference: https://raw.githubusercontent.com/bigbluebutton/bbb-webrtc-sfu/v2.7.2/docs/mediasoup.md
+  # Configure mediasoup IPs, reference: https://raw.githubusercontent.com/colhountech/bbb-webrtc-sfu/v2.7.2/docs/mediasoup.md
   # mediasoup IPs: WebRTC
   yq e -i '.mediasoup.webrtc.listenIps[0].ip = "0.0.0.0"' $TARGET
   yq e -i ".mediasoup.webrtc.listenIps[0].announcedIp = \"$IP\"" $TARGET
