@@ -14,6 +14,7 @@ cp "$PRESENTATION_PDF" /var/www/bigbluebutton-default/default.pdf
 cp "$PRESENTATION_PDF" /var/www/bigbluebutton-default/assets/default.pdf
 
 cp /etc/bigbluebutton/bbb-conf/index.html /var/www/bigbluebutton-default/assets/index.html
+cp /etc/bigbluebutton/bbb-conf/bbb-custom.css /var/www/bigbluebutton-default/assets/bbb-custom.css
 
 yq eval -i '.public.layout.hidePresentationOnJoin = true' /etc/bigbluebutton/bbb-html5.yml
 yq eval -i '.public.layout.showSessionDetailsOnJoin = false' /etc/bigbluebutton/bbb-html5.yml
@@ -23,6 +24,10 @@ yq eval -i '.public.app.skipCheck = true' /etc/bigbluebutton/bbb-html5.yml
 yq eval -i '.public.app.skipCheckOnJoin = true' /etc/bigbluebutton/bbb-html5.yml
 yq eval -i '.public.app.skipEchoTestIfPreviousDevice = true' /etc/bigbluebutton/bbb-html5.yml
 yq eval -i '.public.app.listenOnlyMode = false' /etc/bigbluebutton/bbb-html5.yml
+yq eval -i '.public.app.clientTitle = "Mindset Mastery"' /etc/bigbluebutton/bbb-html5.yml
+yq eval -i '.public.app.customStyleUrl = "https://bbb.colhountech.com/bbb-custom.css"' /etc/bigbluebutton/bbb-html5.yml
+yq eval -i '.public.app.allowDefaultLogoutUrl = false' /etc/bigbluebutton/bbb-html5.yml
+yq eval -i '.public.app.timeoutBeforeRedirectOnMeetingEnd = 2000' /etc/bigbluebutton/bbb-html5.yml
 
 # Video: do NOT set skipVideoPreview or skipVideoPreviewOnFirstJoin to true —
 # that breaks manual webcam sharing ("Finding webcams" hangs forever).
@@ -38,8 +43,9 @@ else
   echo "defaultWelcomeMessageFooter=" >> /etc/bigbluebutton/bbb-web.properties
 fi
 
+DISABLED_FEATURES="sharedNotes,learningDashboard,learningDashboardDownloadSessionData,breakoutRooms,polls,virtualBackgrounds"
 if grep -q "^disabledFeatures=" /etc/bigbluebutton/bbb-web.properties 2>/dev/null; then
-  sed -i "s/^disabledFeatures=.*/disabledFeatures=sharedNotes/" /etc/bigbluebutton/bbb-web.properties
+  sed -i "s/^disabledFeatures=.*/disabledFeatures=${DISABLED_FEATURES}/" /etc/bigbluebutton/bbb-web.properties
 else
-  echo "disabledFeatures=sharedNotes" >> /etc/bigbluebutton/bbb-web.properties
+  echo "disabledFeatures=${DISABLED_FEATURES}" >> /etc/bigbluebutton/bbb-web.properties
 fi
