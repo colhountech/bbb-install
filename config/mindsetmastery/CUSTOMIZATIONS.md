@@ -15,6 +15,16 @@ Tracked configuration for `bbb.colhountech.com` (BBB 3.0.32) and the Mindset Mas
 ssh root@78.47.120.165 bbb-conf --restart   # if html5 client needs a restart
 ```
 
+### Landing page redirect
+
+| File | Purpose |
+|------|---------|
+| `index.html` | Redirects `https://bbb.colhountech.com/` → `https://mindsetmastery.app/` via JS (`window.location.replace`) |
+| Live path | `/var/www/bigbluebutton-default/assets/index.html` |
+| Canonical on server | `/etc/bigbluebutton/bbb-conf/index.html` |
+
+BBB error URLs (`?errors=...`) are still shown instead of redirecting.
+
 ### Presentation
 
 | Setting | Value | Purpose |

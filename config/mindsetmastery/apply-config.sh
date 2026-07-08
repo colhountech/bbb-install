@@ -13,6 +13,8 @@ cp "$PRESENTATION_PDF" /var/bigbluebutton/blank/blank-presentation.pdf
 cp "$PRESENTATION_PDF" /var/www/bigbluebutton-default/default.pdf
 cp "$PRESENTATION_PDF" /var/www/bigbluebutton-default/assets/default.pdf
 
+cp /etc/bigbluebutton/bbb-conf/index.html /var/www/bigbluebutton-default/assets/index.html
+
 yq eval -i '.public.layout.hidePresentationOnJoin = true' /etc/bigbluebutton/bbb-html5.yml
 yq eval -i '.public.layout.showSessionDetailsOnJoin = false' /etc/bigbluebutton/bbb-html5.yml
 
