@@ -105,6 +105,27 @@ enableUFWRules
 
 Replace or extend that file with your own logic.
 
+### Mindset Mastery deployment (tracked in this repo)
+
+Server customizations for `bbb.colhountech.com` are version-controlled under:
+
+```
+config/mindsetmastery/
+  apply-config.sh          # canonical apply-config (deploy this to the server)
+  deploy-apply-config.sh   # push + re-apply in one command
+  CUSTOMIZATIONS.md        # full inventory (server + app join flow)
+```
+
+Deploy after editing:
+
+```bash
+chmod +x config/mindsetmastery/deploy-apply-config.sh
+./config/mindsetmastery/deploy-apply-config.sh
+ssh root@78.47.120.165 bbb-conf --restart   # when html5 client settings change
+```
+
+App-side join userdata and flow are documented in the same `CUSTOMIZATIONS.md` and in the Mindset Mastery repo at `docs/BBB-INTEGRATION.md`.
+
 ### Override files (survive package updates)
 
 | Path | Purpose |
