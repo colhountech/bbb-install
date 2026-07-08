@@ -39,6 +39,11 @@ usage() {
 
 Script for installing a BigBlueButton 3.0 server in under 30 minutes.
 
+On a server where BigBlueButton is already installed, re-running this script
+upgrades packages and container images only. Your existing configuration is
+preserved and customizations in /etc/bigbluebutton/bbb-conf/apply-config.sh
+are re-applied via bbb-conf --check.
+
 This script also checks if your server supports https://docs.bigbluebutton.org/administration/install/#minimum-server-requirements
 
 USAGE:
@@ -243,10 +248,6 @@ main() {
     check_version "$VERSION"
   fi
 
-  if [ "$SKIP_APACHE_INSTALLED_CHECK" != true ]; then
-    check_apache2
-  fi
-
   # Check if we're installing coturn (need an e-mail address for Let's Encrypt)
   if [ -z "$VERSION" ] && [ -n "$COTURN" ]; then
     if [ -z "$EMAIL" ]; then err "Installing coturn needs an e-mail address for Let's Encrypt"; fi
@@ -265,8 +266,15 @@ main() {
     err "Keycloak cannot be installed without Greenlight."
   fi
 
-  # We're installing BigBlueButton
-  env
+  if is_bbb_installed; then
+    say "BigBlueButton is already installed — upgrading packages only; existing configuration will be preserved."
+    run_bbb_upgrade
+    exit 0
+  fi
+
+  if [ "$SKIP_APACHE_INSTALLED_CHECK" != true ]; then
+    check_apache2
+  fi
 
   check_mem
   check_cpus
@@ -411,6 +419,85 @@ usage_err() {
 
 check_root() {
   if [ $EUID != 0 ]; then err "You must run this command as root."; fi
+}
+
+is_bbb_installed() {
+  dpkg -s bigbluebutton >/dev/null 2>&1
+}
+
+run_bbb_upgrade() {
+  check_mem
+  check_cpus
+  check_ipv6
+
+  if [ -f /usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties ]; then
+    SERVLET_DIR=/usr/share/bbb-web
+  fi
+
+  apt-get update
+  apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confnew" dist-upgrade
+
+  need_pkg apt-transport-https
+  need_pkg bigbluebutton
+  need_pkg bbb-html5
+
+  apt-get auto-remove -y
+
+  if [ -n "$GREENLIGHT" ]; then
+    if [ -f "$GL3_DIR/docker-compose.yml" ]; then
+      upgrade_greenlight_v3
+    else
+      say "Greenlight not yet installed — running full Greenlight setup."
+      install_docker
+      BBB_WEB_ETC_CONFIG=/etc/bigbluebutton/bbb-web.properties
+      install_greenlight_v3
+    fi
+  fi
+
+  if [ -f "$LTI_DIR/docker-compose.yml" ]; then
+    upgrade_lti
+  elif [[ ${#LTI_CREDS[*]} -eq 2 ]]; then
+    say "LTI framework not yet installed — running full LTI setup."
+    install_docker
+    BBB_WEB_ETC_CONFIG=/etc/bigbluebutton/bbb-web.properties
+    install_lti
+  fi
+
+  bbb-conf --check
+  say "Upgrade complete. Package updates applied; your configuration was not reset."
+  say "Custom settings in /etc/bigbluebutton/bbb-conf/apply-config.sh were re-applied."
+}
+
+upgrade_greenlight_v3() {
+  say "upgrading greenlight-v3 container images (configuration preserved)..."
+  check_root
+  install_docker
+
+  local GL_IMG_REPO=bigbluebutton/greenlight:v3
+  docker pull "$GL_IMG_REPO"
+  docker-compose -f "$GL3_DIR/docker-compose.yml" pull
+
+  if check_container_running greenlight-v3; then
+    docker-compose -f "$GL3_DIR/docker-compose.yml" down
+  fi
+
+  docker-compose -f "$GL3_DIR/docker-compose.yml" up -d
+  say "greenlight-v3 upgraded."
+}
+
+upgrade_lti() {
+  say "upgrading BBB LTI framework container images (configuration preserved)..."
+  check_root
+  install_docker
+
+  docker-compose -f "$LTI_DIR/docker-compose.yml" pull
+
+  if check_container_running broker; then
+    docker-compose -f "$LTI_DIR/docker-compose.yml" down
+  fi
+
+  docker-compose -f "$LTI_DIR/docker-compose.yml" up -d
+  say "BBB LTI framework upgraded."
 }
 
 check_mem() {
@@ -574,7 +661,7 @@ check_version() {
 }
 
 check_host() {
-  if [ -z "$PROVIDED_CERTIFICATE" ] && [ -z "$HOST" ]; then
+  if [ -z "$PROVIDED_CERTIFICATE" ]; then
     need_pkg dnsutils apt-transport-https
     DIG_IP=$(dig +short "$1" | grep '^[.0-9]*$' | tail -n1)
     if [ -z "$DIG_IP" ]; then err "Unable to resolve $1 to an IP address using DNS lookup.";  fi
