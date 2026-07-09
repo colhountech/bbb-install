@@ -14,7 +14,6 @@ cp "$PRESENTATION_PDF" /var/www/bigbluebutton-default/default.pdf
 cp "$PRESENTATION_PDF" /var/www/bigbluebutton-default/assets/default.pdf
 
 cp /etc/bigbluebutton/bbb-conf/index.html /var/www/bigbluebutton-default/assets/index.html
-cp /etc/bigbluebutton/bbb-conf/bbb-custom.css /var/www/bigbluebutton-default/assets/bbb-custom.css
 
 yq eval -i '.public.layout.hidePresentationOnJoin = true' /etc/bigbluebutton/bbb-html5.yml
 yq eval -i '.public.layout.showSessionDetailsOnJoin = false' /etc/bigbluebutton/bbb-html5.yml
@@ -24,10 +23,10 @@ yq eval -i '.public.app.skipCheck = true' /etc/bigbluebutton/bbb-html5.yml
 yq eval -i '.public.app.skipCheckOnJoin = true' /etc/bigbluebutton/bbb-html5.yml
 yq eval -i '.public.app.skipEchoTestIfPreviousDevice = true' /etc/bigbluebutton/bbb-html5.yml
 yq eval -i '.public.app.listenOnlyMode = false' /etc/bigbluebutton/bbb-html5.yml
-yq eval -i '.public.app.clientTitle = "Mindset Mastery"' /etc/bigbluebutton/bbb-html5.yml
-yq eval -i '.public.app.customStyleUrl = "https://bbb.colhountech.com/bbb-custom.css"' /etc/bigbluebutton/bbb-html5.yml
-yq eval -i '.public.app.allowDefaultLogoutUrl = false' /etc/bigbluebutton/bbb-html5.yml
-yq eval -i '.public.app.timeoutBeforeRedirectOnMeetingEnd = 2000' /etc/bigbluebutton/bbb-html5.yml
+yq eval -i 'del(.public.app.clientTitle)' /etc/bigbluebutton/bbb-html5.yml
+yq eval -i 'del(.public.app.customStyleUrl)' /etc/bigbluebutton/bbb-html5.yml
+yq eval -i 'del(.public.app.allowDefaultLogoutUrl)' /etc/bigbluebutton/bbb-html5.yml
+yq eval -i 'del(.public.app.timeoutBeforeRedirectOnMeetingEnd)' /etc/bigbluebutton/bbb-html5.yml
 
 # Video: do NOT set skipVideoPreview or skipVideoPreviewOnFirstJoin to true —
 # that breaks manual webcam sharing ("Finding webcams" hangs forever).

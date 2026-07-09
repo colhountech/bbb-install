@@ -31,17 +31,6 @@ BBB error URLs (`?errors=...`) are still shown instead of redirecting.
 |---------|-------|---------|
 | Default PDF | `/root/Mindset.Mastery.Presentation.pdf` | Copied to all four BBB blank/default presentation paths |
 
-### Branding (`bbb-html5.yml` + `bbb-custom.css`)
-
-| Setting | Value | Purpose |
-|---------|-------|---------|
-| `clientTitle` | `Mindset Mastery` | Browser tab title in meetings |
-| `customStyleUrl` | `https://bbb.colhountech.com/bbb-custom.css` | Navy/gold theme + Inter font |
-| `allowDefaultLogoutUrl` | `false` | Always use app `logoutURL`, not BBB default |
-| `timeoutBeforeRedirectOnMeetingEnd` | `2000` | Redirect to Rooms 2s after leaving (was 20s) |
-
-`disabledFeatures` (server default): `sharedNotes` only (learning dashboard, breakout rooms, polls, and virtual backgrounds are enabled)
-
 ### Layout (`bbb-html5.yml`)
 
 | Setting | Value | Purpose |
