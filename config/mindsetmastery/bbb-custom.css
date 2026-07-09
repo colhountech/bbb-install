@@ -37,9 +37,3 @@ button[class*="primary"]:hover,
   background-color: #5c4522 !important;
   border-color: #5c4522 !important;
 }
-
-/* Hide Learning Analytics link on logout screen when feature flag missed */
-a[href*="learning-analytics-dashboard"],
-a[href*="learningDashboard"] {
-  display: none !important;
-}

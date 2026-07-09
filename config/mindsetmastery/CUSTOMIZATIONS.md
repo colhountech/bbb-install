@@ -40,7 +40,7 @@ BBB error URLs (`?errors=...`) are still shown instead of redirecting.
 | `allowDefaultLogoutUrl` | `false` | Always use app `logoutURL`, not BBB default |
 | `timeoutBeforeRedirectOnMeetingEnd` | `2000` | Redirect to Rooms 2s after leaving (was 20s) |
 
-`disabledFeatures` (server default): `sharedNotes,learningDashboard,learningDashboardDownloadSessionData,breakoutRooms,polls,virtualBackgrounds`
+`disabledFeatures` (server default): `sharedNotes` only (learning dashboard, breakout rooms, polls, and virtual backgrounds are enabled)
 
 ### Layout (`bbb-html5.yml`)
 

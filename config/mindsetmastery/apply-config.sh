@@ -43,7 +43,7 @@ else
   echo "defaultWelcomeMessageFooter=" >> /etc/bigbluebutton/bbb-web.properties
 fi
 
-DISABLED_FEATURES="sharedNotes,learningDashboard,learningDashboardDownloadSessionData,breakoutRooms,polls,virtualBackgrounds"
+DISABLED_FEATURES="sharedNotes"
 if grep -q "^disabledFeatures=" /etc/bigbluebutton/bbb-web.properties 2>/dev/null; then
   sed -i "s/^disabledFeatures=.*/disabledFeatures=${DISABLED_FEATURES}/" /etc/bigbluebutton/bbb-web.properties
 else
